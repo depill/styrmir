@@ -14,8 +14,15 @@ class StyrmirPipeline(object):
     def __init__(self):
         self.items = {}
 
+    def is_date_in_item(self, date):
+        if date in self.items:
+            return self.is_date_in_item(date + datetime.timedelta(0, 1))
+        return date
+
     def process_item(self, item, spider):
-        self.items[item['date']] = (
+        date = self.is_date_in_item(item['date'])
+
+        self.items[date] = (
             PyRSS2Gen.RSSItem(
                 title=item['title'],
                 link=item['link'],
