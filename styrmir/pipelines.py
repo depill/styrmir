@@ -33,4 +33,4 @@ class StyrmirPipeline(object):
 
             items=self.items)
 
-        rss.write_xml(open(join(expanduser('~'), 'html/styrmir.xml'), 'w'))
+        rss.write_xml(open(join(expanduser('~'), 'html/styrmir.xml'), 'w'), encoding='utf-8')
