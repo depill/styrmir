@@ -8,14 +8,14 @@
 import PyRSS2Gen
 import datetime
 from os.path import expanduser,join
-
+from collections import OrderedDict
 
 class StyrmirPipeline(object):
     def __init__(self):
-        self.items = []
+        self.items = {}
 
     def process_item(self, item, spider):
-        self.items.append(
+        self.items[item['date']] = (
             PyRSS2Gen.RSSItem(
                 title=item['title'],
                 link=item['link'],
@@ -25,12 +25,13 @@ class StyrmirPipeline(object):
         )
 
     def close_spider(self, spider):
+        self.items = OrderedDict(sorted(self.items.items(), key=lambda t: t[0], reverse=True))
         rss = PyRSS2Gen.RSS2(
             title='Styrmir.is',
             link='http://www.styrmir.is',
             description='Fréttir af forsíðu Styrmir.is',
             lastBuildDate=datetime.datetime.now(),
 
-            items=self.items)
+            items=[v for k,v in self.items.items()])
 
         rss.write_xml(open(join(expanduser('~'), 'html/styrmir.xml'), 'w'), encoding='utf-8')
