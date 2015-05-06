@@ -7,6 +7,7 @@
 
 import PyRSS2Gen
 import datetime
+from os.path import expanduser,join
 
 
 class StyrmirPipeline(object):
@@ -25,11 +26,11 @@ class StyrmirPipeline(object):
 
     def close_spider(self, spider):
         rss = PyRSS2Gen.RSS2(
-            title="Styrmir.is",
-            link="http://www.styrmir.is",
-            description="Fréttir af forsíðu Styrmir.is",
+            title='Styrmir.is',
+            link='http://www.styrmir.is',
+            description='Fréttir af forsíðu Styrmir.is',
             lastBuildDate=datetime.datetime.now(),
 
             items=self.items)
 
-        rss.write_xml(open("styrmir.xml", "w"))
+        rss.write_xml(open(join(expanduser('~'), 'html/styrmir.xml'), 'w'))
