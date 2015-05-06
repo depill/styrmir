@@ -5,7 +5,7 @@
 
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
-from scrapy.selector import HtmlXPathSelector
+from scrapy.selector import Selector
 from ..items import StyrmirItem
 from datetime import datetime, timedelta
 import locale
@@ -17,8 +17,8 @@ class StyrmirSpider(CrawlSpider):
     def parse_items(self, response):
         locale.setlocale(locale.LC_ALL, 'is_IS.UTF-8')
 
-        hxs = HtmlXPathSelector(response)
-        entry = hxs.select('//div[@class="clear styrmir-entry"]')
+        hxs = Selector(response)
+        entry = hxs.xpath('//div[@class="clear styrmir-entry"]')
         styrmir_entry = entry[0]
         styrmir = StyrmirItem()
 
@@ -27,7 +27,5 @@ class StyrmirSpider(CrawlSpider):
         styrmir['date_text'] = styrmir_entry.xpath('//div[@class="styrmir-dags"]/text()').extract()[0].strip().encode('utf-8').replace('\xc3\x9e', '\xc3\xbe')
         styrmir['date'] = datetime.strptime(styrmir['date_text'], "%A, %d. %B %Y")
         styrmir['title'] = styrmir_entry.xpath('//h2/a/text()').extract()[0]
-        if styrmir['date'] < (datetime.now() - timedelta(days=30)):
-            return
 
         return styrmir
